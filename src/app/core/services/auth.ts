@@ -14,28 +14,27 @@ export class AuthService {
 
   private readonly STORAGE_KEY = 'DAM2_AUTH_SESSION';
 
-  // Guardamos el usuario actual
+  // La Signal empieza con la sesión guardada, si existe.
   private _currentUser = signal<UserSession | null>(
     this.readSessionFromStorage()
   );
 
+  // Las páginas pueden leerla, pero solo este servicio puede cambiarla.
   public currentUser = this._currentUser.asReadonly();
 
-  // Comprobamos si ha iniciado sesión
+  // Este valor se actualiza solo cuando cambia el usuario actual.
   public isAuthenticated = computed(() =>
     this._currentUser()?.isAuthenticated ?? false
   );
 
-  // Iniciar sesión
+  // Credenciales de prueba para esta práctica.
   public login(user: string, pass: string): boolean {
 
     let role: 'admin' | 'user';
 
-    // Administrador
     if (user === 'admin' && pass === '123') {
       role = 'admin';
 
-    // Operador
     } else if (user === 'operador' && pass === '123') {
       role = 'user';
 
@@ -49,7 +48,7 @@ export class AuthService {
       isAuthenticated: true
     };
 
-    // Guardamos la sesión
+    // Actualizamos la Signal y guardamos la sesión para mantenerla al recargar.
     this._currentUser.set(sessionData);
 
     sessionStorage.setItem(
@@ -60,18 +59,18 @@ export class AuthService {
     return true;
   }
 
-  // Comprobar el rol del usuario
+  // El guard usa este método para comprobar el rol permitido.
   public hasRole(role: 'admin' | 'user'): boolean {
     return this._currentUser()?.role === role;
   }
 
-  // Cerrar sesión
+  // Borramos la sesión de memoria y del navegador.
   public logout(): void {
     sessionStorage.removeItem(this.STORAGE_KEY);
     this._currentUser.set(null);
   }
 
-  // Recuperar la sesión almacenada
+  // sessionStorage conserva la sesión solo en esta pestaña.
   private readSessionFromStorage(): UserSession | null {
 
     if (typeof sessionStorage === 'undefined') {

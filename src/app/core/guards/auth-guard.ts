@@ -6,16 +6,15 @@ import { AuthService } from '../services/auth';
 
 export const authGuard: CanActivateFn = (route, state) => {
 
-  // Obtenemos el servicio de autenticacion
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Si el usuario ha iniciado sesion, puede entrar
+  // Este guard solo comprueba que haya una sesión iniciada.
   if (authService.isAuthenticated()) {
     return true;
   }
 
-  // Si no ha iniciado sesion, vuelve al login
+  // Guardamos la ruta solicitada para volver tras iniciar sesión.
   return router.createUrlTree(['/login'], {
     queryParams: { returnUrl: state.url }
   });

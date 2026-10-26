@@ -1,7 +1,7 @@
 
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import {
   IonHeader,
@@ -47,12 +47,13 @@ export class LoginPage {
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   username = '';
   password = '';
   errorMessage = '';
 
-  // Comprobar las credenciales
+  // Comprobamos las credenciales con el servicio.
   handleLogin(): void {
 
     this.errorMessage = '';
@@ -63,7 +64,14 @@ export class LoginPage {
     );
 
     if (success) {
-      this.router.navigate(['/admin']);
+      // Cada usuario tiene su panel según el rol guardado en la sesión.
+      const role = this.authService.currentUser()!.role;
+      const home = role === 'admin' ? '/admin' : '/user-dashboard';
+      const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+
+      // Aceptamos returnUrl solo si es el panel permitido para ese rol.
+      const destination = returnUrl === home ? returnUrl : home;
+      this.router.navigateByUrl(destination, { replaceUrl: true });
     } else {
       this.errorMessage = 'Usuario o contraseña incorrectos';
     }
