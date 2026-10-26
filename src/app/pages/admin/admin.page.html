@@ -1,0 +1,49 @@
+
+<ion-header>
+  <ion-toolbar color="primary">
+
+    <ion-title>Panel de Administración</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="handleLogout()">
+        Cerrar sesión
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card>
+
+    <ion-card-header>
+
+      <ion-card-title>
+        Bienvenido, {{ currentSession()?.username }}
+      </ion-card-title>
+
+      <ion-card-subtitle>
+        Rol: {{ currentSession()?.role }}
+      </ion-card-subtitle>
+
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <p>Has iniciado sesión correctamente.</p>
+
+      <p>
+        Esta página está protegida mediante
+        un Functional Guard de Angular.
+      </p>
+
+      <p>
+        La sesión se mantiene en sessionStorage.
+      </p>
+
+    </ion-card-content>
+
+  </ion-card>
+
+</ion-content>
